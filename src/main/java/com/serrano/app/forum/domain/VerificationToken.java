@@ -3,9 +3,11 @@ package com.serrano.app.forum.domain;
 import java.time.Instant;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,4 +27,6 @@ public class VerificationToken {
 	private Instant created_at;
 	private Instant expires_at;
 	private String token;
+	@OneToOne(fetch = FetchType.LAZY)
+	private User user;
 }
