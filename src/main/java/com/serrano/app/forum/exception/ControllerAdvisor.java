@@ -43,6 +43,18 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler{
         return new ResponseEntity<>(exception,status);
     }
 	
+	@ExceptionHandler(CustomApiException.class)
+    public ResponseEntity<Object> handleCustomApiException(CustomApiException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        
+        APIException exception = new APIException(
+        	ex.getMessage(),
+        	ex.getErrors(),
+            status,
+            Instant.now());
+        return new ResponseEntity<>(exception,status);
+    }
+	
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
