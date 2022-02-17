@@ -1,0 +1,17 @@
+ <!DOCTYPE html>
+ <html xmlns:th = "http://www.thymeleaf.org">
+ <head>
+ </head>
+ <body>
+  <div style='font-family: sans-serif;width: 100%;font-size: 16px;'>  
+           <div><h1>Hello, <span th:text="${username}"><span></h1><div>We're happy you signed up. <p style="'margin: 0;'">To start exploring the app, please confirm your email address</p></div></div>  
+           <div style='margin: 20px 0px;width: 100%;display: flex;justify-content: center;align-content: center;align-items: center;'>  
+         
+               <a th:ref="${token}" style='background-color: #0928a2;text-decoration: none;color: white;padding: 10px;border-radius: 10px;font-weight: bold;'>Verify now</a>  
+           </div>  
+           <div>  
+              <p style='border-left: 5px solid #fb7600;padding-left: 10px;background-color: #ffe084b8;'>This verification link will expire in 1 minute</p>  
+           </div>  
+        </div>
+ </body>
+ </html>
