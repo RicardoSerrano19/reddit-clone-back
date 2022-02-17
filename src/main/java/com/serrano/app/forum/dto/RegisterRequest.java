@@ -14,13 +14,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest implements Serializable{
-    @NotEmpty(message = "email should not be empty")
+	private static final long serialVersionUID = 1L;
+	
+	@NotEmpty(message = "email should not be empty")
     @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$",
     	    message = "email must be valid")
 	private String email;
     @NotEmpty(message = "username should not be empty")
     @Size(min = 5, max = 50, message 
-      = "firstName must be between 5 and 50 characters")
+      = "username must be between 5 and 50 characters")
 	private String username;
     @NotEmpty(message = "password should not be empty")
     @Size(min = 5, max = 100, message 
