@@ -19,6 +19,7 @@ import com.serrano.app.forum.dto.RegisterRequest;
 import com.serrano.app.forum.dto.ServiceResponse;
 import com.serrano.app.forum.exception.CustomApiException;
 import com.serrano.app.forum.exception.TokenNotFoundException;
+import com.serrano.app.forum.exception.UsernameAlreadyExistException;
 import com.serrano.app.forum.exception.UsernameNotFoundException;
 import com.serrano.app.forum.repository.UserRepository;
 import com.serrano.app.forum.repository.VerificationTokenRepository;
@@ -46,6 +47,7 @@ public class AuthService {
 	
 	@Transactional
 	public ServiceResponse signup(RegisterRequest request) {
+		if(exist(request.getUsername())) throw new UsernameAlreadyExistException(request.getUsername());
 		User user = mapper.map(request, User.class);
 		user.setPassword(encoder.encode(request.getPassword()));
 		user.setCreated_at(Instant.now());
@@ -74,7 +76,7 @@ public class AuthService {
 	@Transactional
 	public void fetchUserAndEnable(VerificationToken token) {
 		String username = token.getUser().getUsername();
-		User user = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+		User user = findUser(username);
 		user.setEnabled(true);
 		try {
 			userRepo.save(user);
@@ -93,6 +95,16 @@ public class AuthService {
 		}catch(Exception ex) {
 			log.error(ex.getMessage());
 		}
-		
+	}
+	
+	private User findUser(String username) {
+		User user = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+		return user;
+	}
+	
+	private boolean exist(String username) {
+		Optional<User> user = userRepo.findByUsername(username);
+		if(user.isPresent()) return true;
+		return false;
 	}
 }
