@@ -31,6 +31,18 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler{
         return new ResponseEntity<>(exception,status);
     }
 	
+	@ExceptionHandler(UsernameAlreadyExistException.class)
+    public ResponseEntity<Object> handleUserAlreadyExistException(UsernameAlreadyExistException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        
+        APIException exception = new APIException(
+        	ex.getMessage(),
+        	ex.getErrors(),
+            status,
+            Instant.now());
+        return new ResponseEntity<>(exception,status);
+    }
+	
 	@ExceptionHandler(TokenNotFoundException.class)
     public ResponseEntity<Object> handleTokenNotFoundException(TokenNotFoundException ex, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
