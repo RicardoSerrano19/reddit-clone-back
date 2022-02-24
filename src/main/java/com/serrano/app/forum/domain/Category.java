@@ -1,6 +1,7 @@
 package com.serrano.app.forum.domain;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -29,7 +30,7 @@ public class Category {
 	private String description;
 	private Instant created_at;
 	@OneToMany(fetch = FetchType.LAZY)
-	private Set<Post> posts;
+	private Set<Post> posts = new HashSet<Post>();
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 }
