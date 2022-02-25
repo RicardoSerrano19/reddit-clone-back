@@ -20,6 +20,7 @@ import com.serrano.app.forum.domain.Category;
 import com.serrano.app.forum.dto.Categories;
 import com.serrano.app.forum.dto.CategoryDTO;
 import com.serrano.app.forum.dto.ServiceResponse;
+import com.serrano.app.forum.exception.CategoryNotFoundException;
 import com.serrano.app.forum.exception.CustomApiException;
 import com.serrano.app.forum.repository.CategoryRepository;
 
@@ -67,5 +68,16 @@ public class CategoryService {
 		return categories;
 	}
 	
+	public CategoryDTO findById(Long id) {
+		Category category = findUser(id);
+		CategoryDTO categoryDTO = mapper.map(category, CategoryDTO.class);
+		return categoryDTO;
+	}
+	
+	@Transactional(readOnly = true)
+	private Category findUser(Long id) {
+		Category category = categoryRepo.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+		return category;
+	}
 	
 }
