@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.serrano.app.forum.domain.User;
 import com.serrano.app.forum.domain.VerificationToken;
@@ -53,6 +53,7 @@ public class AuthService {
 		user.setCreated_at(Instant.now());
 		user.setEnabled(false);
 		VerificationToken token = RegularToken.create(user, 10);
+		log.info("Token: " + token.getToken());
 		try {
 			userRepo.save(user);
 			tokenRepo.save(token);
@@ -71,6 +72,12 @@ public class AuthService {
 		fetchUserAndEnable(verificationToken.get());
 		verifiyToken(verificationToken.get());
 		return new ServiceResponse("User verification succesfully", HttpStatus.OK);
+	}
+	
+	@Transactional(readOnly = true)
+	public User getCurrentUser() {
+		String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
 	}
 	
 	@Transactional
