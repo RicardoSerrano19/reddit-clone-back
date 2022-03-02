@@ -13,6 +13,11 @@ public class CategoryNotFoundException extends RuntimeException{
         this.errors.add(String.format("Category: %s is not found", id));
     }
 	
+	public CategoryNotFoundException(String name){
+        super("Category not found");
+        this.errors.add(String.format("Category: %s is not found", name));
+    }
+	
 	public List<String> getErrors() {
 		return errors;
 	}
