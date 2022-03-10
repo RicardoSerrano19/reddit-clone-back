@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		authenticationFilter.setFilterProcessesUrl("/api/auth/login");
 		http.csrf().disable();
 		http.authorizeRequests()
-			.antMatchers("/api/auth/**","/api/categories/**", "/api/posts/**", "/api/comments/**", "/h2-console/**")
+			.antMatchers("/api/auth/**","/api/categories/**", "/api/posts/**", "/api/comments/**", "/api/votes/**", "/h2-console/**")
 			.permitAll();
 		http.headers().frameOptions().disable();
 		http.authorizeRequests().anyRequest().authenticated();
