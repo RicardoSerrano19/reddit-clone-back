@@ -79,6 +79,18 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler{
         return new ResponseEntity<>(exception,status);
     }
 	
+	@ExceptionHandler(DateGratherException.class)
+    public ResponseEntity<Object> handleDateGratherException(DateGratherException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        
+        APIException exception = new APIException(
+        	ex.getMessage(),
+        	ex.getErrors(),
+            status,
+            Instant.now());
+        return new ResponseEntity<>(exception,status);
+    }
+	
 	@ExceptionHandler(CustomApiException.class)
     public ResponseEntity<Object> handleCustomApiException(CustomApiException ex, WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
