@@ -27,6 +27,7 @@ import com.serrano.app.forum.exception.UsernameNotFoundException;
 import com.serrano.app.forum.repository.CategoryRepository;
 import com.serrano.app.forum.repository.PostRepository;
 import com.serrano.app.forum.repository.UserRepository;
+import com.serrano.app.forum.utils.TimeAgo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,15 +41,18 @@ public class PostService {
 	private final CategoryRepository categoryRepo;
 	private final AuthService authService;
 	private final ModelMapper mapper;
-	
+
 	@PostConstruct
 	private void init() {
 	    TypeMap<PostDTO, Post> propertyMapper = mapper.createTypeMap(PostDTO.class, Post.class);
 	    propertyMapper.addMappings(mapper -> mapper.skip(Post::setId));
-	    
+	    propertyMapper.addMappings(mapper -> mapper.skip(Post::setVotes));
+
+
 	    TypeMap<Post, PostDTO> propertyMapperDTO = mapper.createTypeMap(Post.class, PostDTO.class);
 	    propertyMapperDTO.addMappings(mapper -> mapper.map(src -> src.getCategory().getName(), PostDTO::setCategory));
-
+	    propertyMapperDTO.addMappings(mapper -> mapper.map(src -> src.getVotes(), PostDTO::setVoteCount));
+ 
     }
 	
 	@Transactional

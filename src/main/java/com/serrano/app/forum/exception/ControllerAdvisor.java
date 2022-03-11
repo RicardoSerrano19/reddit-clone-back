@@ -79,7 +79,20 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler{
         return new ResponseEntity<>(exception,status);
     }
 	
-	@ExceptionHandler(VoteNotFoundException.class)
+	
+  @ExceptionHandler(DateGratherException.class)
+    public ResponseEntity<Object> handleDateGratherException(DateGratherException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        
+        APIException exception = new APIException(
+        	ex.getMessage(),
+        	ex.getErrors(),
+            status,
+            Instant.now());
+        return new ResponseEntity<>(exception,status);
+    }
+  
+  @ExceptionHandler(VoteNotFoundException.class)
     public ResponseEntity<Object> handlVoteNotFoundException(VoteNotFoundException ex, WebRequest request) {
         HttpStatus status = HttpStatus.NOT_FOUND;
         
