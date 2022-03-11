@@ -10,8 +10,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.serrano.app.forum.filter.CustomAuthenticationFilter;
+import com.serrano.app.forum.filter.CustomAuthorizationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -28,11 +30,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		authenticationFilter.setFilterProcessesUrl("/api/auth/login");
 		http.csrf().disable();
 		http.authorizeRequests()
-			.antMatchers("/api/auth/**", "/h2-console/**")
+			.antMatchers("/api/auth/**","/api/categories/**", "/api/posts/**", "/api/comments/**", "/api/votes/**", "/h2-console/**")
 			.permitAll();
 		http.headers().frameOptions().disable();
 		http.authorizeRequests().anyRequest().authenticated();
 		http.addFilter(authenticationFilter);
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 	
 	 @Override
