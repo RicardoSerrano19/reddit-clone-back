@@ -26,5 +26,8 @@ public class PostDTO {
 	@NotEmpty(message = "category should not be empty")
 	@Size(min = 5, max = 100, message = "category must be between 5 and 100 characters")
 	private String category;
+	private Integer voteCount;
+	private Integer commentCount;
+	private String duration;
 	private Instant created_at;
 }
