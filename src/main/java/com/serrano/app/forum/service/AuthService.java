@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +20,7 @@ import com.serrano.app.forum.exception.CustomApiException;
 import com.serrano.app.forum.exception.TokenNotFoundException;
 import com.serrano.app.forum.exception.UsernameAlreadyExistException;
 import com.serrano.app.forum.exception.UsernameNotFoundException;
+import com.serrano.app.forum.mapper.AuthMapper;
 import com.serrano.app.forum.repository.UserRepository;
 import com.serrano.app.forum.repository.VerificationTokenRepository;
 import com.serrano.app.forum.utils.RegularToken;
@@ -30,14 +30,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class AuthService {
-	private final ModelMapper mapper;
+	private final AuthMapper mapper;
 	private final PasswordEncoder encoder;
 	private final UserRepository userRepo;
 	private final VerificationTokenRepository tokenRepo;
 	private final MailService mail;
 	
 	@Autowired
-	public AuthService(ModelMapper mapper, PasswordEncoder encoder, UserRepository userRepo, VerificationTokenRepository tokenRepo, MailService mailService) {
+	public AuthService(AuthMapper mapper, PasswordEncoder encoder, UserRepository userRepo, VerificationTokenRepository tokenRepo, MailService mailService) {
 		this.mapper = mapper;
 		this.encoder = encoder;
 		this.userRepo = userRepo;
@@ -48,10 +48,8 @@ public class AuthService {
 	@Transactional
 	public ServiceResponse signup(RegisterRequest request) {
 		if(exist(request.getUsername())) throw new UsernameAlreadyExistException(request.getUsername());
-		User user = mapper.map(request, User.class);
-		user.setPassword(encoder.encode(request.getPassword()));
-		user.setCreated_at(Instant.now());
-		user.setEnabled(false);
+		String password = encoder.encode(request.getPassword());
+		User user = mapper.mapToEntity(request, password);
 		VerificationToken token = RegularToken.create(user, 10);
 		log.info("Token: " + token.getToken());
 		try {

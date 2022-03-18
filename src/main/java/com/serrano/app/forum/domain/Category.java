@@ -4,24 +4,23 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
-@Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Category {
@@ -31,9 +30,8 @@ public class Category {
 	private String name;
 	private String description;
 	private Instant created_at;
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id", foreignKey = @ForeignKey(name= "POST_ID_FK"))
-	private Set<Post> posts = new HashSet<Post>();
+	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true ,fetch = FetchType.LAZY)
+	private Set<Post> posts = new HashSet<>();
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 }
