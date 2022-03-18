@@ -4,7 +4,6 @@ import java.time.Instant;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,9 +27,9 @@ public class Comment {
 	private String content;
 	private Instant crated_at;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "post_id", foreignKey = @ForeignKey(name = "POST_ID_FK"))
+	@JoinColumn(name = "post_id")
 	private Post post;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "USER_ID_FK"))
+	@JoinColumn(name = "user_id")
 	private User user;
 }
