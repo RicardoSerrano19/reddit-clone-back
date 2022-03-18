@@ -47,6 +47,6 @@ public abstract class PostMapper {
 	}
 	
 	Integer commentCount(Post post) {
-		return commentRepo.findByPost(post).size();
+		return commentRepo.countByPost(post).intValue();
 	}
 }

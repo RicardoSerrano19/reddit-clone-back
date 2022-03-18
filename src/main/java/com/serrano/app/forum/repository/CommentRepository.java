@@ -12,6 +12,6 @@ import com.serrano.app.forum.domain.User;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long>{
 	List<Comment> findByPost(Post post);
-
+	Long countByPost(Post post);
 	List<Comment> findByUser(User user);
 }
