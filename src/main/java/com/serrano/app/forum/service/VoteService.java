@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +17,7 @@ import com.serrano.app.forum.enums.VoteType;
 import com.serrano.app.forum.exception.CustomApiException;
 import com.serrano.app.forum.exception.PostNotFoundException;
 import com.serrano.app.forum.exception.VotePreviouslyAssignedException;
+import com.serrano.app.forum.mapper.VoteMapper;
 import com.serrano.app.forum.repository.PostRepository;
 import com.serrano.app.forum.repository.VoteRepository;
 
@@ -35,15 +32,7 @@ public class VoteService {
 	private final VoteRepository voteRepo;
 	private final PostRepository postRepo;
 	private final AuthService authService;
-	private final ModelMapper mapper;
-	
-	@PostConstruct
-	private void init() {
-	    TypeMap<VoteDTO, Vote> propertyMapper = mapper.createTypeMap(VoteDTO.class, Vote.class);
-	    propertyMapper.addMappings(mapper -> mapper.skip(Vote::setPost));
-	    propertyMapper.addMappings(mapper -> mapper.skip(Vote::setId));
-
-	}
+	private final VoteMapper mapper;
 	
 	@Transactional
 	public ServiceResponse vote(VoteDTO voteDTO){
@@ -57,14 +46,11 @@ public class VoteService {
 		post.setVotes(post.getVotes() + quantity);
 		
 		try {
-			Vote vote = currentVote(voteByPostAndUser, voteDTO);
-			vote.setVote(voteDTO.getVoteType());
-			vote.setPost(post);		
-			vote.setUser(user);
+			Vote vote = currentVote(voteByPostAndUser, voteDTO, post, user);
 			
 			Vote voteSaved = voteRepo.save(vote);
 			postRepo.save(post);
-			VoteDTO voteDTOResponse = mapper.map(voteSaved, VoteDTO.class);
+			VoteDTO voteDTOResponse = mapper.mapToDTO(voteSaved);
 			return new ServiceResponse("Vote registration succesfully", HttpStatus.CREATED, voteDTOResponse);			
 		}catch(Exception ex) {
 			throw new CustomApiException("Something went wrong when try to create vote", 
@@ -76,11 +62,12 @@ public class VoteService {
 		return (vote.isPresent() && vote.get().getVote().equals(voteDTO.getVoteType()));
 	}
 	
-	private Vote currentVote(Optional<Vote> vote, VoteDTO voteDTO) {
+	private Vote currentVote(Optional<Vote> vote, VoteDTO voteDTO, Post post, User user) {
 		if(vote.isPresent()) {
-			return vote.get();
+			Vote existingVote = mapper.mapToEntity(vote.get(), post, user, voteDTO.getVoteType());
+			return existingVote;
 		}else {
-			Vote newVote = mapper.map(voteDTO, Vote.class);
+			Vote newVote = mapper.mapToEntity(voteDTO, post, user, voteDTO.getVoteType());
 			return newVote;
 		}
 	}
