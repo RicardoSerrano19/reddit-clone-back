@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 import com.serrano.app.forum.filter.CustomAuthenticationFilter;
 import com.serrano.app.forum.filter.CustomAuthorizationFilter;
@@ -29,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		CustomAuthenticationFilter authenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
 		authenticationFilter.setFilterProcessesUrl("/api/auth/login");
 		http.csrf().disable();
+		http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
 		http.authorizeRequests()
 			.antMatchers("/api/auth/**","/api/categories/**", "/api/posts/**", "/api/comments/**", "/api/votes/**", "/h2-console/**")
 			.permitAll();
